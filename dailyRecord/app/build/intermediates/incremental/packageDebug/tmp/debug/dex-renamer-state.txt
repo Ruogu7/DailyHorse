@@ -1,0 +1,7 @@
+#Sun Sep 20 15:07:31 CST 2026
+base.1=D\:\\codexEdit\\dailyRecord\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\15\\classes.dex
+path.1=15/classes.dex
+base.0=D\:\\codexEdit\\dailyRecord\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+path.0=0/classes.dex
