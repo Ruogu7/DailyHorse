@@ -1,0 +1,7 @@
+com.dailyrecord.app-pngs-0 D:\codexEdit\dailyRecord-build\generated\res\pngs\debug
+com.dailyrecord.app-resValues-1 D:\codexEdit\dailyRecord-build\generated\res\resValues\debug
+com.dailyrecord.app-packageDebugResources-2 D:\codexEdit\dailyRecord-build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.dailyrecord.app-packageDebugResources-3 D:\codexEdit\dailyRecord-build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.dailyrecord.app-debug-4 D:\codexEdit\dailyRecord-build\intermediates\merged_res\debug\mergeDebugResources
+com.dailyrecord.app-debug-5 D:\codexEdit\dailyRecord\app\src\debug\res
+com.dailyrecord.app-main-6 D:\codexEdit\dailyRecord\app\src\main\res

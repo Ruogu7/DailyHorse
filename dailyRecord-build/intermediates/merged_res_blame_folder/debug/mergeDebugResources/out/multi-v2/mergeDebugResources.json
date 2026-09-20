@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.dailyrecord.app-debug-4:/values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "D:\\codexEdit\\dailyRecord\\app\\src\\main\\res\\values\\colors.xml",
+                    "from": {
+                        "startLines": "0",
+                        "startColumns": "11",
+                        "startOffsets": "11",
+                        "endColumns": "63",
+                        "endOffsets": "63"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "56",
+                        "endOffsets": "107"
+                    }
+                }
+            ]
+        }
+    ]
+}
