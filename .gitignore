@@ -1,0 +1,15 @@
+# Android Studio / Gradle state
+**/.gradle/
+**/build/
+dailyRecord-build/generated/
+dailyRecord-build/intermediates/
+dailyRecord-build/tmp/
+dailyRecord-build/outputs/logs/
+dailyRecord-build/outputs/apk/debug/
+
+# Local keys, SDK paths, and signing material
+**/local.properties
+signing/
+*.jks
+*.keystore
+*.p12

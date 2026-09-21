@@ -1,6 +1,14 @@
 plugins { id 'com.android.application' }
 
-layout.buildDirectory = file('D:/codexEdit/dailyRecord-build')
+layout.buildDirectory = rootProject.file('../dailyRecord-build')
+
+def localProps = new Properties()
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) localPropsFile.withInputStream { localProps.load(it) }
+def amapKey = localProps.getProperty('amapApiKey', '').trim()
+def releaseSigningProps = new Properties()
+def releaseSigningFile = rootProject.file('../signing/dailyrecord-release-credentials.properties')
+if (releaseSigningFile.exists()) releaseSigningFile.withInputStream { releaseSigningProps.load(it) }
 
 android {
     namespace 'com.dailyrecord.app'
@@ -12,5 +20,27 @@ android {
         targetSdk 35
         versionCode 1
         versionName '0.1.0'
+        manifestPlaceholders = [AMAP_API_KEY: amapKey]
+        ndk { abiFilters 'armeabi-v7a', 'arm64-v8a' }
     }
+    signingConfigs {
+        release {
+            if (releaseSigningProps.getProperty('storeFile')) {
+                storeFile file(releaseSigningProps.getProperty('storeFile'))
+                storePassword releaseSigningProps.getProperty('storePassword')
+                keyAlias releaseSigningProps.getProperty('keyAlias')
+                keyPassword releaseSigningProps.getProperty('keyPassword')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            if (releaseSigningProps.getProperty('storeFile')) signingConfig signingConfigs.release
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.amap.api:3dmap-location-search:10.1.200_loc6.4.9_sea9.7.4'
 }

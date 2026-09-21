@@ -23,13 +23,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SettingsActivity extends Activity {
-    SharedPreferences prefs;LinearLayout places;EditText name,lat,lon,radius;TextView morningRow,eveningRow;
+    SharedPreferences prefs;LinearLayout places;EditText name,lat,lon,radius;TextView morningRow,morningEndRow,eveningRow,eveningEndRow;
     @Override public void onCreate(Bundle b){super.onCreate(b);prefs=getSharedPreferences("daily",0);migrateOldPlace();build();}
     void migrateOldPlace(){if(getPlaces().length()==0&&prefs.contains("lat")&&prefs.contains("lon")){try{JSONObject p=new JSONObject();p.put("id",java.util.UUID.randomUUID().toString());p.put("name","原有地点");p.put("lat",Double.parseDouble(prefs.getString("lat","0")));p.put("lon",Double.parseDouble(prefs.getString("lon","0")));JSONArray a=new JSONArray();a.put(p);prefs.edit().putString("places",a.toString()).apply();}catch(Exception ignored){}}}
     void build(){
         LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);content.setPadding(28,24,28,28);
         TextView title=new TextView(this);title.setText("设置");title.setTextSize(26);content.addView(title);
-        morningRow=timeRow(content,"早间提醒开始时间","morningTime","07:00");eveningRow=timeRow(content,"晚间提醒开始时间","eveningTime","17:40");
+        TextView scheduleTitle=new TextView(this);scheduleTitle.setText("提醒监控时段");scheduleTitle.setTextSize(20);scheduleTitle.setPadding(0,12,0,0);content.addView(scheduleTitle);
+        morningRow=timeRow(content,"早间开始","morningStart","07:00");morningEndRow=timeRow(content,"早间结束","morningEnd","09:00");
+        eveningRow=timeRow(content,"晚间开始","eveningStart","17:30");eveningEndRow=timeRow(content,"晚间结束","eveningEnd","23:30");
         TextView fixed=new TextView(this);fixed.setText("提醒方式：闹铃 + 震动（固定）");fixed.setTextSize(16);fixed.setPadding(0,12,0,14);content.addView(fixed);
         field(content,"早间附近半径（米，50–1000）","radius","100");radius=(EditText)content.getChildAt(content.getChildCount()-1);
         TextView locTitle=new TextView(this);locTitle.setText("打卡地点");locTitle.setTextSize(20);locTitle.setPadding(0,18,0,8);content.addView(locTitle);

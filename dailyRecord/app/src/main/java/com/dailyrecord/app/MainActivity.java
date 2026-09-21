@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.amap.api.maps.MapsInitializer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -31,10 +32,10 @@ public class MainActivity extends Activity {
     TextView status,positionInfo,nearestInfo,monitorInfo;
     final Handler uiHandler=new Handler(Looper.getMainLooper());
     final Runnable refreshTask=new Runnable(){@Override public void run(){refreshLocation();refreshMonitorInfo();uiHandler.postDelayed(this,4000);}};
-    @Override public void onCreate(Bundle b){super.onCreate(b);prefs=getSharedPreferences("daily",0);showHome();}
+    @Override public void onCreate(Bundle b){super.onCreate(b);MapsInitializer.updatePrivacyShow(this,true,true);MapsInitializer.updatePrivacyAgree(this,true);prefs=getSharedPreferences("daily",0);showHome();}
     void showHome(){
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setGravity(Gravity.CENTER_HORIZONTAL);root.setPadding(dp(24),dp(12),dp(24),dp(24));root.setBackgroundColor(Color.rgb(250,247,239));
-        LinearLayout top=new LinearLayout(this);top.setGravity(Gravity.END|Gravity.CENTER_VERTICAL);Button settings=new Button(this);settings.setText("⚙ 设置");settings.setTextSize(15);settings.setAllCaps(false);settings.setTextColor(Color.rgb(35,55,65));settings.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(232,235,232)));settings.setOnClickListener(v->startActivity(new Intent(this,SettingsActivity.class)));top.addView(settings,new LinearLayout.LayoutParams(dp(112),dp(48)));root.addView(top,new LinearLayout.LayoutParams(-1,dp(56)));
+        LinearLayout top=new LinearLayout(this);top.setGravity(Gravity.END|Gravity.CENTER_VERTICAL);Button mapButton=new Button(this);mapButton.setText("地图");mapButton.setTextSize(15);mapButton.setAllCaps(false);mapButton.setTextColor(Color.rgb(35,55,65));mapButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(232,235,232)));mapButton.setOnClickListener(v->startActivity(new Intent(this,MapActivity.class)));top.addView(mapButton,new LinearLayout.LayoutParams(dp(82),dp(48)));Button settings=new Button(this);settings.setText("⚙ 设置");settings.setTextSize(15);settings.setAllCaps(false);settings.setTextColor(Color.rgb(35,55,65));settings.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(232,235,232)));settings.setOnClickListener(v->startActivity(new Intent(this,SettingsActivity.class)));LinearLayout.LayoutParams settingsLp=new LinearLayout.LayoutParams(dp(112),dp(48));settingsLp.leftMargin=dp(8);top.addView(settings,settingsLp);root.addView(top,new LinearLayout.LayoutParams(-1,dp(56)));
         ImageView logo=new ImageView(this);logo.setImageResource(com.dailyrecord.app.R.mipmap.ic_launcher);logo.setScaleType(ImageView.ScaleType.FIT_CENTER);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(174),dp(174));lp.bottomMargin=dp(8);root.addView(logo,lp);
         TextView title=new TextView(this);title.setText("DailyRecord");title.setTextSize(28);title.setTypeface(Typeface.DEFAULT,Typeface.BOLD);title.setTextColor(Color.rgb(18,56,72));title.setGravity(Gravity.CENTER);root.addView(title);
         TextView sub=new TextView(this);sub.setText("地点打卡提醒");sub.setTextSize(15);sub.setTextColor(Color.rgb(95,105,110));sub.setGravity(Gravity.CENTER);LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);subLp.bottomMargin=dp(18);root.addView(sub,subLp);
