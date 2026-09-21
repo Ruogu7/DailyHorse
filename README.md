@@ -4,6 +4,7 @@
 
 ![Main Picture]([url](https://github.com/Ruogu7/DailyHorse/blob/main/Mainpicture.png)/to/image "MainPicture")
 
+![GitHub Logo](https://githubassets.com)
 
 
 
