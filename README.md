@@ -2,7 +2,7 @@
 
 用于提醒牛马，及时考勤打卡。
 
-![Main Picture]([url](https://github.com/Ruogu7/DailyHorse/blob/main/Mainpicture.png)/to/image "MainPicture")
+![Main Picture](https://github.com/Ruogu7/DailyHorse/blob/main/Mainpicture.png)/to/image "MainPicture"
 
 ![GitHub Logo](https://githubassets.com)
 
