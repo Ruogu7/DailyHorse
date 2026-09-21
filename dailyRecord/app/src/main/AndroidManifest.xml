@@ -18,7 +18,10 @@
         <activity android:name=".MapActivity" android:exported="false" android:label="地点地图" />
         <service android:name=".MonitorService" android:exported="false" android:foregroundServiceType="location" />
         <receiver android:name=".BootReceiver" android:enabled="true" android:exported="false">
-            <intent-filter><action android:name="android.intent.action.BOOT_COMPLETED"/></intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
         </receiver>
     </application>
 </manifest>

@@ -23,3 +23,10 @@ Android location check-in reminder app (`com.dailyrecord.app`).
 Local SDK paths, AMap keys, signing credentials, and Gradle intermediates are excluded from Git. Release signing requires the owner's private keystore and local signing configuration; never commit those files.
 
 The checked-in release APK is signed with the project's release certificate. Keep that certificate backed up to publish compatible updates.
+
+## Reminder behavior (v0.2.0)
+
+- Default morning window: 07:00?09:00. The first arrival within 80 m of any saved office triggers one alarm-and-vibration reminder per day.
+- Default evening window: 17:30?23:30. Leaving an 80 m office geofence triggers an alarm-and-vibration reminder. Further evening reminders are suppressed until more than 30 minutes after the previous one.
+- When monitoring is enabled during the evening window, the first valid location fix triggers a reminder if the phone is already more than 80 m from every saved office, subject to the same cooldown.
+- The monitor restores after device boot and app update when monitoring was enabled. Grant precise and all-the-time background location, allow notifications, and on Huawei enable Auto-launch, Secondary launch, and Run in background for DailyRecord. Set battery management to unrestricted where available. Android and device power policies can still affect location update timing.
