@@ -5,7 +5,9 @@ dailyRecord-build/generated/
 dailyRecord-build/intermediates/
 dailyRecord-build/tmp/
 dailyRecord-build/outputs/logs/
-dailyRecord-build/outputs/apk/debug/
+dailyRecord-build/outputs/apk/debug/*
+!dailyRecord-build/outputs/apk/debug/app-debug.apk
+!dailyRecord-build/outputs/apk/debug/output-metadata.json
 
 # Local keys, SDK paths, and signing material
 **/local.properties
