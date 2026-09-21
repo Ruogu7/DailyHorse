@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.text.SpannableString;
@@ -16,12 +19,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.Gravity;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.View;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -49,6 +50,8 @@ public class MapActivity extends Activity implements LocationListener {
     private boolean mapLoaded;
     private boolean initialCameraSet;
     private boolean userMovedMap;
+    private com.amap.api.maps.model.BitmapDescriptor officeIcon;
+    private com.amap.api.maps.model.BitmapDescriptor personIcon;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -56,6 +59,8 @@ public class MapActivity extends Activity implements LocationListener {
         MapsInitializer.updatePrivacyShow(this, true, true);
         MapsInitializer.updatePrivacyAgree(this, true);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        officeIcon = markerIcon(R.drawable.ic_marker_office);
+        personIcon = markerIcon(R.drawable.ic_marker_person);
         buildView(state);
     }
 
@@ -118,7 +123,7 @@ public class MapActivity extends Activity implements LocationListener {
         titleRow.addView(count);
         panel.addView(titleRow);
         hint = new TextView(this);
-        hint.setText("正在获取手机位置…");
+        hint.setText(savedPlaceCount() == 0 ? "还没有打卡地点，请先在设置中添加" : "正在获取手机位置…");
         hint.setTextColor(Color.rgb(65, 83, 91));
         hint.setTextSize(12);
         hint.setSingleLine(true);
@@ -157,8 +162,24 @@ public class MapActivity extends Activity implements LocationListener {
 
     private int dp(float value) { return Math.round(value * getResources().getDisplayMetrics().density); }
 
+    private com.amap.api.maps.model.BitmapDescriptor markerIcon(int resourceId) {
+        Drawable drawable = getDrawable(resourceId);
+        int width = dp(48), height = dp(56);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, width, height);
+        drawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
     private LatLng toMap(double latitude, double longitude) {
-        return new CoordinateConverter(this).from(CoordType.GPS).coord(new LatLng(latitude, longitude)).convert();
+        try {
+            LatLng converted = new CoordinateConverter(this).from(CoordType.GPS).coord(new LatLng(latitude, longitude)).convert();
+            return converted == null ? new LatLng(latitude, longitude) : converted;
+        } catch (Exception e) {
+            android.util.Log.w("DailyRecordMap", "Coordinate conversion failed; using source coordinate", e);
+            return new LatLng(latitude, longitude);
+        }
     }
 
     private int savedPlaceCount() {
@@ -183,8 +204,8 @@ public class MapActivity extends Activity implements LocationListener {
                 if (first == null) first = point;
                 map.addMarker(new MarkerOptions().position(point).title(p.optString("name", "打卡地点"))
                         .snippet(String.format(java.util.Locale.getDefault(), "%.6f, %.6f", p.getDouble("lat"), p.getDouble("lon")))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-            } catch (Exception ignored) { }
+                        .icon(officeIcon).anchor(0.5f, 1.0f).zIndex(5));
+            } catch (Exception e) { android.util.Log.e("DailyRecordMap", "Could not add saved place marker", e); }
         }
 
         long at = prefs.getLong("lastLocationAt", 0);
@@ -201,13 +222,13 @@ public class MapActivity extends Activity implements LocationListener {
         if (currentMarker == null) {
             currentMarker = map.addMarker(new MarkerOptions().position(point).title("手机当前位置")
                     .snippet(String.format(java.util.Locale.getDefault(), "%.6f, %.6f", latitude, longitude))
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).zIndex(10));
+                    .icon(personIcon).anchor(0.5f, 1.0f).zIndex(10));
         } else {
             currentMarker.setPosition(point);
             currentMarker.setSnippet(String.format(java.util.Locale.getDefault(), "%.6f, %.6f", latitude, longitude));
         }
         if (animate && !userMovedMap) map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
-        hint.setText(String.format(java.util.Locale.getDefault(), "手机实时位置  %.5f, %.5f", latitude, longitude));
+        hint.setText(String.format(java.util.Locale.getDefault(), "● 手机实时位置  %.5f, %.5f  ·  ● 打卡地点 %d 个", latitude, longitude, savedPlaceCount()));
         frameMarkersIfReady();
     }
 
@@ -229,7 +250,13 @@ public class MapActivity extends Activity implements LocationListener {
         if (!any) return;
         try {
             if (pointCount == 1) map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentMarker.getPosition(), 15));
-            else map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), dp(64)));
+            else {
+                LatLngBounds all = bounds.build();
+                if (Math.abs(all.northeast.latitude - all.southwest.latitude) < 0.0004
+                        && Math.abs(all.northeast.longitude - all.southwest.longitude) < 0.0004)
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentMarker.getPosition(), 16));
+                else map.animateCamera(CameraUpdateFactory.newLatLngBounds(all, dp(72)));
+            }
             initialCameraSet = true;
         } catch (Exception ignored) { }
     }
@@ -256,7 +283,7 @@ public class MapActivity extends Activity implements LocationListener {
             }
             if (latest != null) showPhone(latest.getLatitude(), latest.getLongitude(), !initialCameraSet);
         } catch (SecurityException e) {
-            hint.setText("没有定位权限，无法显示手机位置");
+            hint.setText(savedPlaceCount() + " 个打卡地点已显示；授予定位权限后显示手机位置");
         }
     }
 
