@@ -1,5 +1,7 @@
 # DailyHorse / dailyRecord
 
+用于提醒牛马，及时考勤打卡。
+
 Android location check-in reminder app (`com.dailyrecord.app`).
 
 ## Included
